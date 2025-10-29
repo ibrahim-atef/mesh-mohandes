@@ -13,6 +13,8 @@ import 'app/services/global_service.dart';
 import 'app/services/settings_service.dart';
 import 'app/services/translation_service.dart';
 import 'shop/providers/shop_laravel_provider.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 Future<void> initServices() async {
   Get.log('starting services ...');
@@ -30,6 +32,9 @@ Future<void> initServices() async {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   await initServices();
 
   runApp(
