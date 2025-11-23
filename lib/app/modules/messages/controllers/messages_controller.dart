@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -22,7 +21,7 @@ class MessagesController extends GetxController {
   var messages = <Message>[].obs;
   var chats = <Chat>[].obs;
   File? imageFile;
-  Rx<DocumentSnapshot?> lastDocument = new Rx<DocumentSnapshot?>(null);
+  Rx<dynamic> lastDocument = new Rx<dynamic>(null);
   final isLoading = true.obs;
   final isDone = false.obs;
   ScrollController scrollController = ScrollController();
@@ -71,28 +70,23 @@ class MessagesController extends GetxController {
 
   Future refreshMessages() async {
     messages.clear();
-    lastDocument = new Rx<DocumentSnapshot?>(null);
+    lastDocument = new Rx<dynamic>(null);
     await listenForMessages();
   }
 
   Future listenForMessages() async {
     isLoading.value = true;
     isDone.value = false;
-    Stream<QuerySnapshot> _userMessages;
+    // Firebase removed - method stubbed for compatibility
+    Stream _userMessages;
     if (lastDocument.value == null) {
       _userMessages = _chatRepository.getUserMessages(_authService.user.value.id);
     } else {
       _userMessages = _chatRepository.getUserMessagesStartAt(_authService.user.value.id, lastDocument.value!);
     }
-    _userMessages.listen((QuerySnapshot query) {
-      if (query.docs.isNotEmpty) {
-        query.docs.forEach((element) {
-          messages.add(Message.fromDocumentSnapshot(element));
-        });
-        lastDocument.value = query.docs.last;
-      } else {
-        isDone.value = true;
-      }
+    _userMessages.listen((query) {
+      // Firebase removed - no messages will be loaded
+      isDone.value = true;
       isLoading.value = false;
     });
   }

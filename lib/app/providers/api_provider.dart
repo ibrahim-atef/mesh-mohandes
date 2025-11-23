@@ -54,8 +54,10 @@ mixin ApiClient {
 
   void unForceRefresh() {
     if (!foundation.kIsWeb && !foundation.kDebugMode) {
-      _optionsNetwork = buildCacheOptions(Duration(days: 3), forceRefresh: true, options: _optionsNetwork);
-      _optionsCache = buildCacheOptions(Duration(minutes: 10), forceRefresh: false, options: _optionsCache);
+      _optionsNetwork = buildCacheOptions(Duration(days: 3),
+          forceRefresh: true, options: _optionsNetwork);
+      _optionsCache = buildCacheOptions(Duration(minutes: 10),
+          forceRefresh: false, options: _optionsCache);
     }
   }
 

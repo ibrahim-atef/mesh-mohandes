@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -75,7 +74,7 @@ class MessagesView extends GetView<MessagesController> {
       body: RefreshIndicator(
           onRefresh: () async {
             controller.messages.clear();
-            controller.lastDocument = new Rx<DocumentSnapshot?>(null);
+            controller.lastDocument = new Rx<dynamic>(null);
             await controller.listenForMessages();
           },
           child: conversationsList()),

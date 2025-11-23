@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import "parents/model.dart";
@@ -21,12 +20,22 @@ class Chat extends Model {
     this.id = UniqueKey().toString();
   }
 
-  Chat.fromDocumentSnapshot(DocumentSnapshot jsonMap) {
+  Chat.fromDocumentSnapshot(dynamic jsonMap) {
     try {
-      id = jsonMap.id;
-      text = jsonMap.get('text') != null ? jsonMap.get('text').toString() : '';
-      time = jsonMap.get('time') != null ? jsonMap.get('time') : 0;
-      userId = jsonMap.get('user') != null ? jsonMap.get('user').toString() : null;
+      // Firebase removed - now accepts Map<String, dynamic> or compatible object
+      if (jsonMap is Map<String, dynamic>) {
+        id = jsonMap['id']?.toString();
+        text = jsonMap['text']?.toString() ?? '';
+        time = jsonMap['time'] ?? 0;
+        userId = jsonMap['user']?.toString();
+      } else {
+        // Fallback for compatibility
+        id = null;
+        text = '';
+        time = 0;
+        userId = null;
+        user = null;
+      }
     } catch (e) {
       id = null;
       text = '';

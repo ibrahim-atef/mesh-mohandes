@@ -1,29 +1,23 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
-import 'app/providers/firebase_provider.dart';
 import 'app/providers/laravel_provider.dart';
 import 'app/routes/theme1_app_pages.dart';
 import 'app/services/auth_service.dart';
-import 'app/services/firebase_messaging_service.dart';
 import 'app/services/global_service.dart';
 import 'app/services/settings_service.dart';
 import 'app/services/translation_service.dart';
 import 'shop/providers/shop_laravel_provider.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
 
 Future<void> initServices() async {
   Get.log('starting services ...');
+
   await GetStorage.init();
   await Get.putAsync(() => GlobalService().init());
-  await Firebase.initializeApp();
   await Get.putAsync(() => AuthService().init());
   await Get.putAsync(() => LaravelApiClient().init());
-  await Get.putAsync(() => FirebaseProvider().init());
   await Get.putAsync(() => SettingsService().init());
   await Get.putAsync(() => ShopLaravelApiClient().init());
   await Get.putAsync(() => TranslationService().init());
@@ -32,18 +26,12 @@ Future<void> initServices() async {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
   await initServices();
 
   runApp(
     GetMaterialApp(
       title: Get.find<SettingsService>().setting.value.appName ?? '',
       initialRoute: Theme1AppPages.INITIAL,
-      onReady: () async {
-        await Get.putAsync(() => FireBaseMessagingService().init());
-      },
       getPages: Theme1AppPages.routes,
       localizationsDelegates: GlobalMaterialLocalizations.delegates,
       supportedLocales: Get.find<TranslationService>().supportedLocales(),

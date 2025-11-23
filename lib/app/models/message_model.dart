@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 import 'parents/model.dart';
 import 'user_model.dart';
 
@@ -64,22 +62,37 @@ class Message extends Model {
     readByUsers = [];
   }
 
-  Message.fromDocumentSnapshot(DocumentSnapshot jsonMap) {
+  Message.fromDocumentSnapshot(dynamic jsonMap) {
     try {
-      id = jsonMap.id;
-      _name = jsonMap.get('name') != null ? jsonMap.get('name').toString() : '';
-      _readByUsers = jsonMap.get('read_by_users') != null ? List.from(jsonMap.get('read_by_users')) : [];
-      _visibleToUsers = jsonMap.get('visible_to_users') != null ? List.from(jsonMap.get('visible_to_users')) : [];
-      _lastMessage = jsonMap.get('message') != null ? jsonMap.get('message').toString() : '';
-      _lastMessageTime = jsonMap.get('time') != null ? jsonMap.get('time') : 0;
-      _users = jsonMap.get('users') != null
-          ? List.from(jsonMap.get('users')).map((element) {
-              element['media'] = [
-                {'thumb': element['thumb']}
-              ];
-              return User.fromJson(element);
-            }).toList()
-          : [];
+      // Firebase removed - now accepts Map<String, dynamic> or compatible object
+      if (jsonMap is Map<String, dynamic>) {
+        id = jsonMap['id']?.toString() ?? '';
+        _name = jsonMap['name']?.toString() ?? '';
+        _readByUsers = jsonMap['read_by_users'] != null ? List<String>.from(jsonMap['read_by_users']) : [];
+        _visibleToUsers = jsonMap['visible_to_users'] != null ? List<String>.from(jsonMap['visible_to_users']) : [];
+        _lastMessage = jsonMap['message']?.toString() ?? '';
+        _lastMessageTime = jsonMap['time'] ?? 0;
+        _users = jsonMap['users'] != null
+            ? List.from(jsonMap['users']).map((element) {
+                if (element is Map<String, dynamic>) {
+                  element['media'] = [
+                    {'thumb': element['thumb']}
+                  ];
+                  return User.fromJson(element);
+                }
+                return User();
+              }).toList()
+            : [];
+      } else {
+        // Fallback for compatibility
+        id = '';
+        _name = '';
+        _readByUsers = [];
+        _visibleToUsers = [];
+        _lastMessage = '';
+        _lastMessageTime = 0;
+        _users = [];
+      }
     } catch (e) {
       id = '';
       _name = '';

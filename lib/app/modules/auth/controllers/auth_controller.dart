@@ -8,7 +8,6 @@ import '../../../models/user_model.dart';
 import '../../../repositories/user_repository.dart';
 import '../../../routes/app_routes.dart';
 import '../../../services/auth_service.dart';
-import '../../../services/firebase_messaging_service.dart';
 import '../../../services/settings_service.dart';
 import '../../root/controllers/root_controller.dart';
 
@@ -33,9 +32,9 @@ class AuthController extends GetxController {
       loginFormKey.currentState!.save();
       loading.value = true;
       try {
-        await Get.find<FireBaseMessagingService>().setDeviceToken();
         currentUser.value = await _userRepository.login(currentUser.value);
-        await _userRepository.signInWithEmailAndPassword(currentUser.value.email, currentUser.value.apiToken);
+        await _userRepository.signInWithEmailAndPassword(
+            currentUser.value.email, currentUser.value.apiToken);
         await Get.find<RootController>().changePage(0);
       } catch (e) {
         Get.showSnackbar(Ui.ErrorSnackBar(message: e.toString()));
@@ -56,9 +55,9 @@ class AuthController extends GetxController {
           loading.value = false;
           await Get.toNamed(Routes.PHONE_VERIFICATION);
         } else {
-          await Get.find<FireBaseMessagingService>().setDeviceToken();
           currentUser.value = await _userRepository.register(currentUser.value);
-          await _userRepository.signUpWithEmailAndPassword(currentUser.value.email, currentUser.value.apiToken);
+          await _userRepository.signUpWithEmailAndPassword(
+              currentUser.value.email, currentUser.value.apiToken);
           await Get.find<RootController>().changePage(0);
         }
       } catch (e) {
@@ -73,9 +72,9 @@ class AuthController extends GetxController {
     try {
       loading.value = true;
       await _userRepository.verifyPhone(smsSent.value);
-      await Get.find<FireBaseMessagingService>().setDeviceToken();
       currentUser.value = await _userRepository.register(currentUser.value);
-      await _userRepository.signUpWithEmailAndPassword(currentUser.value.email, currentUser.value.apiToken);
+      await _userRepository.signUpWithEmailAndPassword(
+          currentUser.value.email, currentUser.value.apiToken);
       await Get.find<RootController>().changePage(0);
     } catch (e) {
       Get.back();
@@ -97,7 +96,10 @@ class AuthController extends GetxController {
       try {
         await _userRepository.sendResetLinkEmail(currentUser.value);
         loading.value = false;
-        Get.showSnackbar(Ui.SuccessSnackBar(message: "The Password reset link has been sent to your email: ".tr + currentUser.value.email));
+        Get.showSnackbar(Ui.SuccessSnackBar(
+            message:
+                "The Password reset link has been sent to your email: ".tr +
+                    currentUser.value.email));
         Timer(Duration(seconds: 5), () {
           Get.offAndToNamed(Routes.LOGIN);
         });

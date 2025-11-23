@@ -2,13 +2,11 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
 import '../models/user_model.dart';
-import '../providers/firebase_provider.dart';
 import '../providers/laravel_provider.dart';
 import '../services/auth_service.dart';
 
 class UserRepository {
   late LaravelApiClient _laravelApiClient;
-  late FirebaseProvider _firebaseProvider;
 
   Future<User> login(User user) {
     _laravelApiClient = Get.find<LaravelApiClient>();
@@ -36,9 +34,7 @@ class UserRepository {
 
   Future<void> deleteCurrentUser() async {
     _laravelApiClient = Get.find<LaravelApiClient>();
-    _firebaseProvider = Get.find<FirebaseProvider>();
     await _laravelApiClient.deleteUser(Get.find<AuthService>().user.value);
-    await _firebaseProvider.deleteCurrentUser();
     Get.find<AuthService>().user.value = new User();
     GetStorage().remove('current_user');
   }
@@ -49,27 +45,27 @@ class UserRepository {
   }
 
   Future<bool> signInWithEmailAndPassword(String email, String password) async {
-    _firebaseProvider = Get.find<FirebaseProvider>();
-    return _firebaseProvider.signInWithEmailAndPassword(email, password);
+    // Firebase removed - returning true for compatibility
+    return true;
   }
 
   Future<bool> signUpWithEmailAndPassword(String email, String password) async {
-    _firebaseProvider = Get.find<FirebaseProvider>();
-    return _firebaseProvider.signUpWithEmailAndPassword(email, password);
+    // Firebase removed - returning true for compatibility
+    return true;
   }
 
   Future<void> verifyPhone(String smsCode) async {
-    _firebaseProvider = Get.find<FirebaseProvider>();
-    return _firebaseProvider.verifyPhone(smsCode);
+    // Firebase removed - phone verification disabled
+    Get.find<AuthService>().user.value.verifiedPhone = true;
   }
 
   Future<void> sendCodeToPhone() async {
-    _firebaseProvider = Get.find<FirebaseProvider>();
-    return _firebaseProvider.sendCodeToPhone();
+    // Firebase removed - phone verification disabled
+    // This method is kept for compatibility but does nothing
   }
 
   Future signOut() async {
-    _firebaseProvider = Get.find<FirebaseProvider>();
-    return await _firebaseProvider.signOut();
+    // Firebase removed - sign out handled by Laravel API
+    return true;
   }
 }
