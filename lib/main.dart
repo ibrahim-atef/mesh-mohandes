@@ -7,6 +7,7 @@ import 'app/providers/laravel_provider.dart';
 import 'app/routes/theme1_app_pages.dart';
 import 'app/services/auth_service.dart';
 import 'app/services/global_service.dart';
+import 'app/services/location_service.dart';
 import 'app/services/settings_service.dart';
 import 'app/services/translation_service.dart';
 import 'shop/providers/shop_laravel_provider.dart';
@@ -16,6 +17,7 @@ Future<void> initServices() async {
 
   await GetStorage.init();
   await Get.putAsync(() => GlobalService().init());
+  await Get.putAsync(() => LocationService().init());
   await Get.putAsync(() => AuthService().init());
   await Get.putAsync(() => LaravelApiClient().init());
   await Get.putAsync(() => SettingsService().init());

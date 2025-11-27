@@ -22,7 +22,8 @@ class SlideItemWidget extends StatelessWidget {
       children: [
         Transform(
           alignment: Alignment.center,
-          transform: Matrix4.rotationY(Directionality.of(context) == TextDirection.rtl ? math.pi : 0),
+          transform: Matrix4.rotationY(
+              Directionality.of(context) == TextDirection.rtl ? math.pi : 0),
           child: CachedNetworkImage(
             width: double.infinity,
             height: 310,
@@ -47,7 +48,8 @@ class SlideItemWidget extends StatelessWidget {
                   if (slide.text != '')
                     Text(
                       slide.text,
-                      style: Get.textTheme.bodyMedium!.merge(TextStyle(color: slide.textColor)),
+                      style: Get.textTheme.bodyMedium!
+                          .merge(TextStyle(color: slide.textColor)),
                       overflow: TextOverflow.fade,
                       maxLines: 3,
                     ),
@@ -55,12 +57,19 @@ class SlideItemWidget extends StatelessWidget {
                     MaterialButton(
                       onPressed: () {
                         if (slide.eProvider.hasData) {
-                          Get.toNamed(Routes.E_PROVIDER, arguments: {'eProvider': slide.eProvider, 'heroTag': 'e_provider_slide_item'});
+                          Get.toNamed(Routes.E_PROVIDER, arguments: {
+                            'eProvider': slide.eProvider,
+                            'heroTag': 'e_provider_slide_item'
+                          });
                         } else if (slide.eService.hasData) {
-                          Get.toNamed(Routes.E_SERVICE, arguments: {'eService': slide.eService, 'heroTag': 'slide_item'});
+                          Get.toNamed(Routes.E_SERVICE, arguments: {
+                            'eService': slide.eService,
+                            'heroTag': 'slide_item'
+                          });
                         }
                       },
-                      padding: EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+                      padding:
+                          EdgeInsets.symmetric(vertical: 5, horizontal: 20),
                       color: slide.buttonColor,
                       shape: StadiumBorder(),
                       child: Text(
@@ -72,7 +81,8 @@ class SlideItemWidget extends StatelessWidget {
                     ),
                 ],
                 mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: Ui.getCrossAxisAlignment(slide.textPosition),
+                crossAxisAlignment:
+                    Ui.getCrossAxisAlignment(slide.textPosition),
               ),
             )),
       ],

@@ -25,25 +25,41 @@ class DioClient {
     Dio? dio, {
     this.interceptors,
   }) {
+    if (baseUrl.isEmpty) {
+      Get.log('Warning: DioClient initialized with empty baseUrl');
+    }
     _dio = dio ?? Dio();
     _dio
       ..options.baseUrl = baseUrl
       ..options.connectTimeout = _defaultConnectTimeout
       ..options.receiveTimeout = _defaultReceiveTimeout
       ..httpClientAdapter
-      ..options.headers = {'Content-Type': 'application/json; charset=UTF-8', 'X-Requested-With': 'XMLHttpRequest', 'Accept-Language': 'en'};
+      ..options.headers = {
+        'Content-Type': 'application/json; charset=UTF-8',
+        'X-Requested-With': 'XMLHttpRequest',
+        'Accept-Language': 'en'
+      };
     if (interceptors?.isNotEmpty ?? false) {
       _dio.interceptors.addAll(interceptors ?? []);
     }
     if (kDebugMode) {
-      _dio.interceptors.add(LogInterceptor(responseBody: true, error: true, requestHeader: false, responseHeader: false, request: false, requestBody: false));
+      _dio.interceptors.add(LogInterceptor(
+          responseBody: true,
+          error: true,
+          requestHeader: false,
+          responseHeader: false,
+          request: false,
+          requestBody: false));
     }
     optionsNetwork = Options(headers: _dio.options.headers);
     optionsCache = Options(headers: _dio.options.headers);
     if (!kIsWeb && !kDebugMode) {
-      optionsNetwork = buildCacheOptions(Duration(days: 3), forceRefresh: true, options: optionsNetwork);
-      optionsCache = buildCacheOptions(Duration(minutes: 10), forceRefresh: false, options: optionsCache);
-      _dio.interceptors.add(DioCacheManager(CacheConfig(baseUrl: baseUrl)).interceptor);
+      optionsNetwork = buildCacheOptions(Duration(days: 3),
+          forceRefresh: true, options: optionsNetwork);
+      optionsCache = buildCacheOptions(Duration(minutes: 10),
+          forceRefresh: false, options: optionsCache);
+      _dio.interceptors
+          .add(DioCacheManager(CacheConfig(baseUrl: baseUrl)).interceptor);
     }
   }
 
@@ -88,13 +104,21 @@ class DioClient {
         onReceiveProgress: onReceiveProgress,
       );
       _endProgress(programInfo);
+      // Print API Response
+      print('═══════════════════════════════════════════════════════════');
+      print('📡 GET Response: ${uri.toString()}');
+      print('📊 Status Code: ${response.statusCode}');
+      print('📦 Response Data:');
+      print(response.data);
+      print('═══════════════════════════════════════════════════════════');
       return response;
     } on SocketException catch (e) {
       throw SocketException(e.toString());
     } on FormatException catch (_) {
       throw FormatException("Unable to process the data");
     } on FlutterError catch (e) {
-      print(e.runtimeType);
+      Get.log('FlutterError in getUri: ${e.toString()}');
+      throw NetworkExceptions.getDioException(e);
     } catch (e) {
       throw NetworkExceptions.getDioException(e);
     } finally {
@@ -161,6 +185,13 @@ class DioClient {
         onReceiveProgress: onReceiveProgress,
       );
       _endProgress(programInfo);
+      // Print API Response
+      print('═══════════════════════════════════════════════════════════');
+      print('📡 POST Response: ${uri.toString()}');
+      print('📊 Status Code: ${response.statusCode}');
+      print('📦 Response Data:');
+      print(response.data);
+      print('═══════════════════════════════════════════════════════════');
       return response;
     } on FormatException catch (_) {
       throw FormatException("Unable to process the data");
@@ -218,6 +249,13 @@ class DioClient {
         onReceiveProgress: onReceiveProgress,
       );
       _endProgress(programInfo);
+      // Print API Response
+      print('═══════════════════════════════════════════════════════════');
+      print('📡 PUT Response: ${uri.toString()}');
+      print('📊 Status Code: ${response.statusCode}');
+      print('📦 Response Data:');
+      print(response.data);
+      print('═══════════════════════════════════════════════════════════');
       return response;
     } on FormatException catch (_) {
       throw FormatException("Unable to process the data");
@@ -275,6 +313,13 @@ class DioClient {
         onReceiveProgress: onReceiveProgress,
       );
       _endProgress(programInfo);
+      // Print API Response
+      print('═══════════════════════════════════════════════════════════');
+      print('📡 PATCH Response: ${uri.toString()}');
+      print('📊 Status Code: ${response.statusCode}');
+      print('📦 Response Data:');
+      print(response.data);
+      print('═══════════════════════════════════════════════════════════');
       return response;
     } on FormatException catch (_) {
       throw FormatException("Unable to process the data");
@@ -324,6 +369,13 @@ class DioClient {
         cancelToken: cancelToken,
       );
       _endProgress(programInfo);
+      // Print API Response
+      print('═══════════════════════════════════════════════════════════');
+      print('📡 DELETE Response: ${uri.toString()}');
+      print('📊 Status Code: ${response.statusCode}');
+      print('📦 Response Data:');
+      print(response.data);
+      print('═══════════════════════════════════════════════════════════');
       return response;
     } on FormatException catch (_) {
       throw FormatException("Unable to process the data");

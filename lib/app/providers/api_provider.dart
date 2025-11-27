@@ -62,24 +62,36 @@ mixin ApiClient {
   }
 
   String getBaseUrl(String path) {
-    if (!path.endsWith('/')) {
-      path += '/';
+    if (baseUrl.isEmpty) {
+      Get.log('Error: baseUrl is empty when calling getBaseUrl with path: $path');
+      return path;
     }
+    // Remove leading slash from path if present
     if (path.startsWith('/')) {
       path = path.substring(1);
     }
-    if (!baseUrl.endsWith('/')) {
-      return baseUrl + '/' + path;
-    }
-    return baseUrl + path;
+    // Ensure baseUrl doesn't have trailing slash
+    String cleanBaseUrl = baseUrl.endsWith('/') ? baseUrl.substring(0, baseUrl.length - 1) : baseUrl;
+    // Build final URL
+    return '$cleanBaseUrl/$path';
   }
 
   String getApiBaseUrl(String path) {
     String _apiPath = globalService.global.value.apiPath ?? '';
-    if (path.startsWith('/')) {
-      return getBaseUrl(_apiPath) + path.substring(1);
+    if (_apiPath.isEmpty) {
+      Get.log('Warning: apiPath is empty in getApiBaseUrl');
     }
-    return getBaseUrl(_apiPath) + path;
+    // Remove leading slash from path if present
+    if (path.startsWith('/')) {
+      path = path.substring(1);
+    }
+    // Remove leading slash from apiPath if present
+    if (_apiPath.startsWith('/')) {
+      _apiPath = _apiPath.substring(1);
+    }
+    // Build the full API path
+    String fullPath = _apiPath.isEmpty ? path : '$_apiPath/$path';
+    return getBaseUrl(fullPath);
   }
 
   Uri getApiBaseUri(String path) {

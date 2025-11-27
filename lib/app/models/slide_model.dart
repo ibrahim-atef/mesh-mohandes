@@ -152,8 +152,12 @@ class Slide extends Model {
     _indicatorColor = colorFromJson(json, 'indicator_color');
     _image = mediaFromJson(json, 'image');
     _imageFit = stringFromJson(json, 'image_fit');
-    _eService = json?['e_service_id'] != null ? EService(id: json?['e_service_id'].toString()) : null;
-    _eProvider = json?['e_provider_id'] != null ? EProvider(id: json?['e_provider_id'].toString()) : null;
+    _eService = json?['e_service_id'] != null
+        ? EService(id: json?['e_service_id'].toString())
+        : null;
+    _eProvider = json?['e_provider_id'] != null
+        ? EProvider(id: json?['e_provider_id'].toString())
+        : null;
     _enabled = boolFromJson(json, 'enabled');
   }
 

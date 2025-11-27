@@ -13,7 +13,14 @@ class Category extends Model {
   List<Category>? _subCategories;
   List<EService>? _eServices;
 
-  Category({String? id, String? name, String? description, Color? color, bool? featured, List<Category>? subCategories, List<EService>? eServices}) {
+  Category(
+      {String? id,
+      String? name,
+      String? description,
+      Color? color,
+      bool? featured,
+      List<Category>? subCategories,
+      List<EService>? eServices}) {
     this.id = id;
     _color = color;
     _name = name;
@@ -29,9 +36,30 @@ class Category extends Model {
     _color = colorFromJson(json, 'color');
     _description = transStringFromJson(json, 'description');
     _image = mediaFromJson(json, 'image');
+    // If media is empty but icon field exists, use the icon URL
+    if (json != null &&
+        (json['media'] == null ||
+            (json['media'] is List && (json['media'] as List).isEmpty)) &&
+        json['icon'] != null &&
+        json['icon'].toString().isNotEmpty) {
+      _image = Media(url: json['icon'].toString());
+    }
     _featured = boolFromJson(json, 'featured');
-    _eServices = listFromJsonArray(json, ['e_services', 'featured_e_services'], (v) => EService.fromJson(v));
-    _subCategories = listFromJson(json, 'sub_categories', (v) => Category.fromJson(v));
+    _eServices = listFromJsonArray(json, ['e_services', 'featured_e_services'],
+        (v) => EService.fromJson(v));
+    _subCategories =
+        listFromJson(json, 'sub_categories', (v) => Category.fromJson(v));
+
+    // Debug logging
+    if (json != null) {
+      print('═══════════════════════════════════════════════════════════');
+      print('📋 Category Parsed - ID: ${this.id}');
+      print('📝 Name: ${_name}');
+      print('🎨 Color: ${_color}');
+      print('🖼️  Image URL: ${_image?.url}');
+      print('⭐ Featured: ${_featured}');
+      print('═══════════════════════════════════════════════════════════');
+    }
   }
 
   Color get color => _color ?? Colors.white24;
@@ -60,7 +88,15 @@ class Category extends Model {
 
   @override
   int get hashCode =>
-      super.hashCode ^ id.hashCode ^ name.hashCode ^ description.hashCode ^ color.hashCode ^ image.hashCode ^ featured.hashCode ^ subCategories.hashCode ^ eServices.hashCode;
+      super.hashCode ^
+      id.hashCode ^
+      name.hashCode ^
+      description.hashCode ^
+      color.hashCode ^
+      image.hashCode ^
+      featured.hashCode ^
+      subCategories.hashCode ^
+      eServices.hashCode;
 
   Media get image => _image ?? Media();
 

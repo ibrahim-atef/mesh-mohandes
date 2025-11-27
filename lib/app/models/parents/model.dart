@@ -65,18 +65,31 @@ abstract class Model {
     try {
       if (json != null && json[attribute] != null) {
         if (json[attribute] is Map<String, dynamic>?) {
-          var json2 = json[attribute][defaultLocale ?? Get.locale!.languageCode];
-          if (json2 == null) {
-            var languageCode2 = Get.find<TranslationService>().getLocale().languageCode;
-            if (json[attribute][languageCode2] != null && json[attribute][languageCode2] != 'null')
-              return json[attribute][languageCode2].toString();
-            else
-              return defaultValue;
+          var currentLocale = defaultLocale ?? Get.locale?.languageCode;
+          var json2 = currentLocale != null ? json[attribute][currentLocale] : null;
+          
+          if (json2 == null || json2 == 'null') {
+            // Try TranslationService locale
+            try {
+              var languageCode2 = Get.find<TranslationService>().getLocale().languageCode;
+              if (languageCode2 != currentLocale && 
+                  json[attribute][languageCode2] != null && 
+                  json[attribute][languageCode2] != 'null') {
+                return json[attribute][languageCode2].toString();
+              }
+            } catch (e) {
+              // TranslationService not found, continue to fallback
+            }
+            
+            // Fallback to 'en' if available (common API pattern)
+            if (json[attribute]['en'] != null && json[attribute]['en'] != 'null') {
+              return json[attribute]['en'].toString();
+            }
+            
+            // If no match found, return default value
+            return defaultValue;
           } else {
-            if (json2 != null && json2 != 'null')
-              return json2;
-            else
-              return defaultValue;
+            return json2.toString();
           }
         } else {
           return json[attribute].toString();

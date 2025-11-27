@@ -49,7 +49,8 @@ class HomeController extends GetxController {
     await getFeatured();
     Get.find<RootController>().getNotificationsCount();
     if (showMessage) {
-      Get.showSnackbar(Ui.SuccessSnackBar(message: "Home page refreshed successfully".tr));
+      Get.showSnackbar(
+          Ui.SuccessSnackBar(message: "Home page refreshed successfully".tr));
     }
   }
 

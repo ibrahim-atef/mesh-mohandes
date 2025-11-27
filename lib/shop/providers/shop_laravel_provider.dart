@@ -15,10 +15,15 @@ import '../models/store_model.dart';
 
 class ShopLaravelApiClient with ApiClient {
   ShopLaravelApiClient() {
-    this.baseUrl = this.globalService.global.value.laravelBaseUrl ?? '';
+    // baseUrl will be set in init() to ensure GlobalService is ready
   }
 
   Future<ShopLaravelApiClient> init() async {
+    // Ensure baseUrl is set after GlobalService is initialized
+    this.baseUrl = this.globalService.global.value.laravelBaseUrl ?? '';
+    if (this.baseUrl.isEmpty) {
+      Get.log('Warning: ShopLaravelApiClient baseUrl is empty!');
+    }
     super.init();
     return this;
   }

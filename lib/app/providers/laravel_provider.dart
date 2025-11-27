@@ -34,10 +34,15 @@ import 'api_provider.dart';
 
 class LaravelApiClient extends GetxService with ApiClient {
   LaravelApiClient() {
-    this.baseUrl = this.globalService.global.value.laravelBaseUrl ?? '';
+    // baseUrl will be set in init() to ensure GlobalService is ready
   }
 
   Future<LaravelApiClient> init() async {
+    // Ensure baseUrl is set after GlobalService is initialized
+    this.baseUrl = this.globalService.global.value.laravelBaseUrl ?? '';
+    if (this.baseUrl.isEmpty) {
+      Get.log('Warning: LaravelApiClient baseUrl is empty!');
+    }
     super.init();
     return this;
   }
@@ -45,12 +50,13 @@ class LaravelApiClient extends GetxService with ApiClient {
   Future<List<Slide>> getHomeSlider() async {
     Uri _uri = getApiBaseUri("slides");
     var response = await httpClient.getUri(_uri, options: optionsCache);
-    if (response.data['success'] == true) {
+    if (response.data != null && response.data['success'] == true) {
       return response.data['data']
           .map<Slide>((obj) => Slide.fromJson(obj))
           .toList();
     } else {
-      throw new Exception(response.data['message']);
+      String errorMessage = response.data?['message'] ?? 'Unknown error occurred';
+      throw new Exception(errorMessage);
     }
   }
 
@@ -69,10 +75,11 @@ class LaravelApiClient extends GetxService with ApiClient {
       _uri,
       options: optionsNetwork,
     );
-    if (response.data['success'] == true) {
+    if (response.data != null && response.data['success'] == true) {
       return User.fromJson(response.data['data']);
     } else {
-      throw new Exception(response.data['message']);
+      String errorMessage = response.data?['message'] ?? 'Unknown error occurred';
+      throw new Exception(errorMessage);
     }
   }
 
@@ -84,11 +91,12 @@ class LaravelApiClient extends GetxService with ApiClient {
       data: json.encode(user.toJson()),
       options: optionsNetwork,
     );
-    if (response.data['success'] == true) {
+    if (response.data != null && response.data['success'] == true) {
       response.data['data']['auth'] = true;
       return User.fromJson(response.data['data']);
     } else {
-      throw new Exception(response.data['message']);
+      String errorMessage = response.data?['message'] ?? 'Unknown error occurred';
+      throw new Exception(errorMessage);
     }
   }
 
@@ -100,11 +108,12 @@ class LaravelApiClient extends GetxService with ApiClient {
       data: json.encode(user.toJson()),
       options: optionsNetwork,
     );
-    if (response.data['success'] == true) {
+    if (response.data != null && response.data['success'] == true) {
       response.data['data']['auth'] = true;
       return User.fromJson(response.data['data']);
     } else {
-      throw new Exception(response.data['message']);
+      String errorMessage = response.data?['message'] ?? 'Unknown error occurred';
+      throw new Exception(errorMessage);
     }
   }
 
